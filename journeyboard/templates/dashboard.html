@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+
+        <!--This is a test. Comment out when not needed.-->
+        {% if api %}
+            <h1>From - ICS: {{ icscode_from }}<br/>
+                From - Common Name: {{commonname_from }}<br/>
+                From - query: {{ query_from }}<br/>
+            </h1><br/><br/>
+            <h1>To - ICS: {{ icscode_to }}<br/>
+                To - Common Name: {{commonname_to }}<br/>
+                To - query: {{ query_to }}<br/>
+            </h1><br/><br/>
+            <h2>{{ res }}</h2>
+        {% endif %}
+
+
+        <!--This is a test. Comment out when not needed.-->
+        <!--<h1>Testing: {{ icscode_api }}</h1>-->
+        <!--<h3>From: {{ icscode_from }}</h3>
+        <h3>To: {{ icscode_to }}</h3>-->
+
+
+        {% if message != 'success' %}
+            {{ message }}
+            <br/><br/><br/>
+        {% endif %}
+
+        <!-- the query form -->
+        <form action="{% url 'dashboard' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="startjourney">Starting Point</label>
+                <input type="text" class="form-control" placeholder="From" name="from">
+            </div>
+            <div class="form-group">
+                <label for="destination">Destination</label>
+                <input type="text" class="form-control" placeholder="To" name="to">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <br/><br/><br/><br/>
+
+        <!--{% if start %}
+            Journey Starting: {{ start }}
+        {% endif %}
+
+        {% if finish %}
+            Journey Destination: {{ finish }}
+        {% endif %}-->
+
+        {% if api %}
+            <!-- loop 1 -->
+            {% for journey in api.journeys %}
+                <h1>Journey {{ forloop.counter }}</h1>
+                <br/><br/>
+                <!-- the table -->
+                <table class="table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">Start DateTime</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Arrival DateTime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ journey.startDateTime }}</td>
+                            <td>{{ journey.duration }}</td>
+                            <td>{{ journey.arrivalDateTime }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br/>
+                <table class="table">
+                    <thead>
+                        <tr class="bg-primary">
+                            <th>Duration</th>
+                            <th>Instruction</th>
+                            <th>Obstacles</th>
+                            <th>Departure Time</th>
+                            <th>Arrival Time</th>
+                            <th>Departure Point</th>
+                            <th>Arrival Point</th>
+                            <th>Mode</th>
+                        </tr>
+                    </thead>
+                    <!-- loop 2 -->
+                    {% for leg in journey.legs %}
+                        <tbody>
+                            <tr>
+                                <td>{{ leg.duration }}</p>
+                                <td>{{ leg.instruction.detailed }}</p>
+                                <td>{{ leg.obstacles.0.type }}</p>
+                                <td>{{ leg.departureTime }}</p>
+                                <td>{{ leg.arrivalTime }}</p>
+                                <td>{{ leg.departurePoint.commonName }}</p>
+                                <td>{{ leg.arrivalPoint.commonName }}</p>
+                                <td>{{ leg.mode.name }}</p>
+                            </tr>
+                        </tbody>
+                    {% endfor %}
+                </table><br/><br/>
+            {% endfor %}
+        {% endif %}
+        <br/><br/><br/><br/>
+
+
+    {% endblock %}
